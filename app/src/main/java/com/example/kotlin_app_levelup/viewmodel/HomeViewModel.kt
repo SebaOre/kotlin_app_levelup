@@ -69,8 +69,50 @@ class HomeViewModel(context: Context) : ViewModel() {
             ProductEntity(
                 code = "CG001",
                 name = "PC Gamer ASUS ROG Strix",
-                price = 1299990,
+                price = 1250990,
                 imageRes = com.example.kotlin_app_levelup.R.drawable.gamer1
+            ),
+            ProductEntity(
+                code = "BA001",
+                name = "Catan",
+                price = 29990,
+                imageRes = com.example.kotlin_app_levelup.R.drawable.catan_1
+            ),
+            ProductEntity(
+                code = "BA002",
+                name = "Carcassonne",
+                price = 24990,
+                imageRes = com.example.kotlin_app_levelup.R.drawable.catan_1
+            ),
+            ProductEntity(
+                code = "CA001",
+                name = "Secretlab Titan",
+                price = 349990,
+                imageRes = com.example.kotlin_app_levelup.R.drawable.silla1
+            ),
+            ProductEntity(
+                code = "CA003",
+                name = "Logitech G502 HERO",
+                price = 49990,
+                imageRes = com.example.kotlin_app_levelup.R.drawable.mousel1
+            ),
+            ProductEntity(
+                code = "CA002",
+                name = "Razer Goliathus Chroma",
+                price = 29990,
+                imageRes = com.example.kotlin_app_levelup.R.drawable.mpad1
+            ),
+            ProductEntity(
+                code = "DA001",
+                name = "Polera 'Level-Up'",
+                price = 14990,
+                imageRes = com.example.kotlin_app_levelup.R.drawable.lvlup1
+            ),
+            ProductEntity(
+                code = "DA002",
+                name = "Poleron Gamer",
+                price = 19990,
+                imageRes = com.example.kotlin_app_levelup.R.drawable.perso1
             )
         )
     }
