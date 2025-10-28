@@ -16,10 +16,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.kotlin_app_levelup.model.Product
+import com.example.kotlin_app_levelup.data.local.ProductEntity
 
 @Composable
-fun ProductCard(product: Product) {
+fun ProductCard(product: ProductEntity) {
     Card(
         colors = CardDefaults.cardColors(containerColor = Color(0xFF101010)),
         modifier = Modifier
