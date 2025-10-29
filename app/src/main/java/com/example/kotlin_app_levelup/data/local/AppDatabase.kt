@@ -5,9 +5,14 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [ProductEntity::class], version = 3, exportSchema = false)
+@Database(
+    entities = [ProductEntity::class, UserEntity::class],
+    version = 4,
+    exportSchema = false
+)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun productDao(): ProductDao
+    abstract fun userDao(): UserDao
 
     companion object {
         @Volatile
@@ -20,7 +25,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "levelup_db"
                 )
-                    .fallbackToDestructiveMigration(false) // ⚡ Esta línea borra y recrea si hay cambios
+                    .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance
@@ -28,3 +33,4 @@ abstract class AppDatabase : RoomDatabase() {
         }
     }
 }
+

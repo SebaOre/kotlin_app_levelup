@@ -5,11 +5,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.kotlin_app_levelup.ui.screens.BottomNavigationBar
 import com.example.kotlin_app_levelup.ui.screens.Categorias.CategoriaScreen
+import com.example.kotlin_app_levelup.ui.screens.Perfil.LoginScreen
 import com.example.kotlin_app_levelup.ui.screens.Perfil.PerfilScreen
+import com.example.kotlin_app_levelup.ui.screens.Perfil.RegistroScreen
 import com.example.kotlin_app_levelup.ui.screens.home.HomeScreen
 import com.example.kotlin_app_levelup.ui.theme.Kotlin_app_levelupTheme
 
@@ -19,24 +23,23 @@ class MainActivity : ComponentActivity() {
         setContent {
             Kotlin_app_levelupTheme {
 
-                // Estado que controla la pestaña seleccionada
-                var selectedRoute by remember { mutableStateOf("home") }
+                val navController = rememberNavController()
 
-                // Estructura principal con barra inferior
                 Scaffold(
                     bottomBar = {
-                        BottomNavigationBar(
-                            selectedRoute = selectedRoute,
-                            onItemSelected = { selectedRoute = it }
-                        )
+                        BottomNavigationBar(navController = navController)
                     }
                 ) { padding ->
-
-                    // Renderiza la pantalla correspondiente, aplicando el padding del Scaffold
-                    when (selectedRoute) {
-                        "home" -> HomeScreen(modifier = Modifier.padding(padding))
-                        "categorias" -> CategoriaScreen(modifier = Modifier.padding(padding))
-                        "perfil" -> PerfilScreen(modifier = Modifier.padding(padding))
+                    NavHost(
+                        navController = navController,
+                        startDestination = "home",
+                        modifier = Modifier.padding(padding)
+                    ) {
+                        composable("home") { HomeScreen(modifier = Modifier.padding(padding)) }
+                        composable("categorias") { CategoriaScreen(modifier = Modifier.padding(padding)) }
+                        composable("perfil") { PerfilScreen(modifier = Modifier.padding(padding), navController = navController) }
+                        composable("login") { LoginScreen(navController) }
+                        composable("registro") { RegistroScreen(navController) }
                     }
                 }
             }
