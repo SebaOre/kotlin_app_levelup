@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Kotlin_app_levelupTheme {
+            Kotlin_app_levelupTheme(darkTheme = true, dynamicColor = false) {
                 val navController = rememberNavController()
                 val context = LocalContext.current
                 val db = remember { AppDatabase.getDatabase(context) }
@@ -66,6 +66,7 @@ class MainActivity : ComponentActivity() {
                         composable("carrito") {
                             CartScreen(
                                 modifier = Modifier.padding(padding),
+                                navController = navController,
                                 viewModel = cartViewModel
                             )
                         }
