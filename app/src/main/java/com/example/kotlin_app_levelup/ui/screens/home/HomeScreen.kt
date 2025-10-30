@@ -17,13 +17,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.kotlin_app_levelup.viewmodel.HomeViewModel
 import com.example.kotlin_app_levelup.ui.components.ProductCard
 import com.example.kotlin_app_levelup.viewmodel.HomeViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier.fillMaxSize())
     val context = LocalContext.current
@@ -62,7 +63,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     )
                 },
                 actions = {
-                    IconButton(onClick = { /* Navegar al carrito */ }) {
+                    IconButton(onClick = { navController.navigate("carrito") }) {
                         Icon(Icons.Default.ShoppingCart, contentDescription = "Carrito", tint = Color(0xFF1E90FF))
                     }
                 },
@@ -87,7 +88,9 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     modifier = Modifier.padding(4.dp)
                 ) {
                     items(products) { product ->
-                        ProductCard(product)
+                        ProductCard(product) {
+                            navController.navigate("detalle/${product.code}")
+                        }
                     }
                 }
             }

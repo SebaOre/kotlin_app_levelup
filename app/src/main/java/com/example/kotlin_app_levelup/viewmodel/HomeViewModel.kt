@@ -52,70 +52,79 @@ class HomeViewModel(context: Context) : ViewModel() {
                 code = "AC000",
                 name = "PlayStation 5",
                 price = 549990,
+                description = "Consola de video de ultima generacion",
                 imageRes = com.example.kotlin_app_levelup.R.drawable.play51
             ),
             ProductEntity(
                 code = "AC001",
                 name = "Control Xbox Series X",
                 price = 59990,
+                description = "Control de consola de Xbox Series X ",
                 imageRes = com.example.kotlin_app_levelup.R.drawable.conxbox1
             ),
             ProductEntity(
                 code = "AC002",
                 name = "HyperX Cloud II",
                 price = 79990,
+                description = "Audifonos Gamer de alta calidad",
                 imageRes = com.example.kotlin_app_levelup.R.drawable.hyper1
             ),
             ProductEntity(
                 code = "CG001",
                 name = "PC Gamer ASUS ROG Strix",
                 price = 1250990,
+                description = "Pc gamer con componentes de ultima generación",
                 imageRes = com.example.kotlin_app_levelup.R.drawable.gamer1
             ),
             ProductEntity(
                 code = "BA001",
                 name = "Catan",
                 price = 29990,
+                description = "Juego de mesa para disfrutar con amigos",
                 imageRes = com.example.kotlin_app_levelup.R.drawable.catan_1
             ),
             ProductEntity(
                 code = "BA002",
                 name = "Carcassonne",
                 price = 24990,
-                imageRes = com.example.kotlin_app_levelup.R.drawable.catan_1
+                description = "Juego de mesa para disfrutar con amigos",
+                imageRes = com.example.kotlin_app_levelup.R.drawable.carcassonne1
             ),
             ProductEntity(
                 code = "CA001",
                 name = "Secretlab Titan",
                 price = 349990,
+                description = "Silla Gamer de alta calidad",
                 imageRes = com.example.kotlin_app_levelup.R.drawable.silla1
             ),
             ProductEntity(
                 code = "CA003",
                 name = "Logitech G502 HERO",
                 price = 49990,
+                description = "Mouse de alta calidad para juegos y tareas varias",
                 imageRes = com.example.kotlin_app_levelup.R.drawable.mousel1
             ),
             ProductEntity(
                 code = "CA002",
                 name = "Razer Goliathus Chroma",
                 price = 29990,
+                description = "Mouse pad Gamer presicion y calidad",
                 imageRes = com.example.kotlin_app_levelup.R.drawable.mpad1
             ),
             ProductEntity(
                 code = "DA001",
                 name = "Polera 'Level-Up'",
                 price = 14990,
+                description = "Polera personalizada de LevelUp",
                 imageRes = com.example.kotlin_app_levelup.R.drawable.lvlup1
             ),
             ProductEntity(
                 code = "DA002",
                 name = "Poleron Gamer",
                 price = 19990,
+                description = "Polerones personlizado de videoJuegos",
                 imageRes = com.example.kotlin_app_levelup.R.drawable.perso1
             )
         )
     }
-
-
 }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -19,15 +20,15 @@ import androidx.compose.ui.unit.sp
 import com.example.kotlin_app_levelup.data.local.ProductEntity
 
 @Composable
-fun ProductCard(product: ProductEntity) {
+fun ProductCard(product: ProductEntity,onClick: (() -> Unit)? = null) {
     Card(
         colors = CardDefaults.cardColors(containerColor = Color(0xFF101010)),
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
-            .clickable { /* Detalle del producto */ },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
+            .clickable { onClick?.invoke() },  // 👈 clickable
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        shape = RoundedCornerShape(12.dp)) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(8.dp)
