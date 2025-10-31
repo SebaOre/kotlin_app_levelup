@@ -44,4 +44,12 @@ interface ProductDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(products: List<ProductEntity>)
+
+    @Query("""
+    SELECT * FROM products
+    WHERE categoria = :category AND code <> :excludeCode
+    ORDER BY id DESC
+""")
+    suspend fun getSuggestions(category: String, excludeCode: String): List<ProductEntity>
+
 }

@@ -1,4 +1,5 @@
 package com.example.kotlin_app_levelup.ui.screens.home
+
 import java.text.NumberFormat
 import java.util.Locale
 import androidx.compose.foundation.Image
@@ -31,6 +32,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.kotlin_app_levelup.R
+import com.example.kotlin_app_levelup.data.local.AppDatabase
 import com.example.kotlin_app_levelup.data.local.ProductEntity
 import com.example.kotlin_app_levelup.data.local.UserPreferences
 import com.example.kotlin_app_levelup.viewmodel.CartViewModel
@@ -47,14 +49,14 @@ fun ProductDetailScreen(
     cartViewModel: CartViewModel
 ) {
     val context = LocalContext.current
+    val db = remember { AppDatabase.getDatabase(context) }
+
     val userPrefs = remember { UserPreferences(context) }
     val isLoggedIn by userPrefs.isLoggedInFlow.collectAsState(initial = false)
     val userName by userPrefs.userNameFlow.collectAsState(initial = "")
 
     // ViewModel de reseñas (Room)
-    val reviewsVM: ReviewsViewModel = viewModel(
-        factory = ReviewsViewModelFactory(context, product.code)
-    )
+    val reviewsVM: ReviewsViewModel = viewModel(factory = ReviewsViewModelFactory(context, product.code))
     val reviews by reviewsVM.reviews.collectAsState()
     val avgRating by reviewsVM.avgRating.collectAsState()
 
@@ -73,6 +75,14 @@ fun ProductDetailScreen(
 
     var newRating by remember { mutableStateOf(0) }
     var newText by remember { mutableStateOf("") }
+
+    // ===== SUGERENCIAS =====
+    var suggestions by remember(product.code, product.categoria) { mutableStateOf<List<ProductEntity>>(emptyList()) }
+    LaunchedEffect(product.code, product.categoria) {
+        // trae de la misma categoría, excluyendo el actual
+        val all = db.productDao().getSuggestions(product.categoria, product.code)
+        suggestions = all.take(8) // muestra hasta 8 miniaturas
+    }
 
     Scaffold(
         topBar = {
@@ -120,7 +130,7 @@ fun ProductDetailScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Carrusel
+            // ===== Carrusel =====
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -159,7 +169,7 @@ fun ProductDetailScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // ⭐ Promedio bajo la imagen (si no hay, 5 estrellas grises)
+            // ⭐ Promedio
             Row(verticalAlignment = Alignment.CenterVertically) {
                 val starsFilled = avgRating.toInt()
                 repeat(5) { i ->
@@ -181,7 +191,7 @@ fun ProductDetailScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Detalles
+            // ===== Detalles =====
             Text(
                 text = product.name,
                 color = Color.White,
@@ -206,7 +216,7 @@ fun ProductDetailScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Añadir al carrito
+            // ===== Añadir al carrito =====
             Button(
                 onClick = {
                     if (!isLoggedIn) {
@@ -229,7 +239,6 @@ fun ProductDetailScreen(
                 Text("Reseñas", color = Color.White, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(8.dp))
 
-                // Lista de reseñas existentes (desde DB)
                 if (reviews.isNotEmpty()) {
                     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                         reviews.forEach { r ->
@@ -261,7 +270,10 @@ fun ProductDetailScreen(
                     Spacer(Modifier.height(16.dp))
                 }
 
-                // Bloque para nueva reseña (estrellas -> texto -> botón)
+                // Nueva reseña
+                var newRating by remember { mutableStateOf(0) }
+                var newText by remember { mutableStateOf("") }
+
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     repeat(5) { i ->
                         val idx = i + 1
@@ -311,7 +323,58 @@ fun ProductDetailScreen(
                 }
             }
 
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // ===== Sugerencias (miniaturas) =====
+            if (suggestions.isNotEmpty()) {
+                Text("También te puede interesar", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                Spacer(Modifier.height(8.dp))
+
+                // rejilla simple 2xN en columna (mini cards)
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                    suggestions.chunked(2).forEach { row ->
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                            row.forEach { p ->
+                                SuggestionMiniCard(p) {
+                                    navController.navigate("detalle/${p.code}")
+                                }
+                            }
+                            if (row.size == 1) {
+                                Spacer(Modifier.weight(1f)) // rellena si impar
+                            }
+                        }
+                    }
+                }
+            }
+
             Spacer(modifier = Modifier.height(12.dp))
+        }
+    }
+}
+
+@Composable
+private fun SuggestionMiniCard(p: ProductEntity, onClick: () -> Unit) {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF151515)),
+        modifier = Modifier
+            .height(120.dp)
+            .clickable { onClick() }
+    ) {
+        Row(Modifier.fillMaxSize().padding(8.dp)) {
+            Image(
+                painter = painterResource(id = p.imageRes),
+                contentDescription = p.name,
+                modifier = Modifier
+                    .size(100.dp)
+                    .clip(MaterialTheme.shapes.medium),
+                contentScale = ContentScale.Crop
+            )
+            Spacer(Modifier.width(8.dp))
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.SpaceBetween) {
+                Text(p.name, color = Color.White, maxLines = 2)
+                Text("$" + NumberFormat.getNumberInstance(Locale("es", "CL")).format(p.price),
+                    color = Color(0xFF39FF14), fontWeight = FontWeight.Bold)
+            }
         }
     }
 }
