@@ -56,8 +56,12 @@ class MainActivity : ComponentActivity() {
 
                         // 🔁 Categorías -> Mis Compras
                         composable("miscompras") {
-                            MisComprasScreen(modifier = Modifier.padding(padding))
+                            MisComprasScreen(
+                                navController = navController,
+                                modifier = Modifier.padding(padding)
+                            )
                         }
+
 
                         composable("perfil") {
                             PerfilScreen(
