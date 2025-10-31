@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
@@ -41,7 +42,11 @@ fun HomeScreen(
     val viewModel: HomeViewModel = viewModel(factory = HomeViewModelFactory(context))
 
     val products by viewModel.products.collectAsState()
+    val categories by viewModel.categories.collectAsState()
+    val selectedCategory by viewModel.selectedCategory.collectAsState()
+
     var searchText by remember { mutableStateOf(TextFieldValue("")) }
+    var catMenuExpanded by remember { mutableStateOf(false) }
 
     // contador carrito
     val cartItems by cartViewModel.cartItems.collectAsState()
@@ -51,12 +56,10 @@ fun HomeScreen(
         topBar = {
             TopAppBar(
                 navigationIcon = {
-                    // 🏷️ Logo Level-Up
                     Image(
                         painter = painterResource(id = R.drawable.logo),
                         contentDescription = "Level-Up",
-                        modifier = Modifier
-                            .size(logoSize)
+                        modifier = Modifier.size(logoSize)
                     )
                 },
                 title = {
@@ -79,24 +82,43 @@ fun HomeScreen(
                             cursorColor = Color(0xFF1E90FF)
                         ),
                         leadingIcon = {
-                            Icon(
-                                Icons.Default.Search,
-                                contentDescription = null,
-                                tint = Color(0xFF1E90FF)
-                            )
+                            Icon(Icons.Default.Search, contentDescription = null, tint = Color(0xFF1E90FF))
                         }
                     )
                 },
                 actions = {
-                    BadgedBox(
-                        badge = { if (cartCount > 0) Badge { Text("$cartCount") } }
-                    ) {
-                        IconButton(onClick = { navController.navigate("carrito") }) {
-                            Icon(
-                                Icons.Default.ShoppingCart,
-                                contentDescription = "Carrito",
-                                tint = Color(0xFF1E90FF)
+                    // 🏷️ Botón de categorías con menú
+                    Box {
+                        IconButton(onClick = { catMenuExpanded = true }) {
+                            Icon(Icons.Default.FilterList, contentDescription = "Categorías", tint = Color(0xFF1E90FF))
+                        }
+                        DropdownMenu(
+                            expanded = catMenuExpanded,
+                            onDismissRequest = { catMenuExpanded = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Todas", color = Color.White) },
+                                onClick = {
+                                    viewModel.filterByCategory(null)
+                                    catMenuExpanded = false
+                                }
                             )
+                            categories.forEach { cat ->
+                                DropdownMenuItem(
+                                    text = { Text(cat, color = Color.White) },
+                                    onClick = {
+                                        viewModel.filterByCategory(cat)
+                                        catMenuExpanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+
+                    // 🛒 Carrito
+                    BadgedBox(badge = { if (cartCount > 0) Badge { Text("$cartCount") } }) {
+                        IconButton(onClick = { navController.navigate("carrito") }) {
+                            Icon(Icons.Default.ShoppingCart, contentDescription = "Carrito", tint = Color(0xFF1E90FF))
                         }
                     }
                 },
@@ -105,12 +127,23 @@ fun HomeScreen(
         },
         containerColor = Color.Black
     ) { padding ->
-        Box(
+        Column(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
                 .background(Color.Black)
         ) {
+            // Chip con categoría seleccionada (para limpiar rápido)
+            if (!selectedCategory.isNullOrBlank()) {
+                AssistChip(
+                    onClick = { viewModel.filterByCategory(null) },
+                    label = { Text("Categoría: ${selectedCategory}", color = Color.Black) },
+                    colors = AssistChipDefaults.assistChipColors(containerColor = Color(0xFF39FF14)),
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                )
+            }
+
             if (products.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text("Sin productos", color = Color.Gray)
