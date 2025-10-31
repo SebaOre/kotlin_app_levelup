@@ -6,53 +6,43 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 
-data class CartItem(
-    val product: ProductEntity,
-    var quantity: Int = 1
-)
-
 class CartViewModel : ViewModel() {
 
     private val _cartItems = MutableStateFlow<List<CartItem>>(emptyList())
     val cartItems: StateFlow<List<CartItem>> = _cartItems
 
-    // Agregar al carrito
-    fun addToCart(product: ProductEntity) {
-        _cartItems.update { current ->
-            val existing = current.find { it.product.code == product.code }
-            if (existing != null) {
-                current.map {
-                    if (it.product.code == product.code)
-                        it.copy(quantity = it.quantity + 1)
-                    else it
-                }
+    /* ========= API ========= */
+
+    // 👍 addToCart que pediste (por defecto suma 1)
+    fun addToCart(product: ProductEntity, qty: Int = 1) = addItem(product, qty)
+
+    // (opcional) si en algún lado construyes CartItem directo
+    fun addToCart(item: CartItem) = addItem(item.product, item.quantity)
+
+    /* ======== Interno ======== */
+
+    private fun addItem(product: ProductEntity, qty: Int = 1) {
+        _cartItems.update { list ->
+            val idx = list.indexOfFirst { it.product.code == product.code }
+            if (idx >= 0) {
+                val cur = list[idx]
+                list.toMutableList().also { it[idx] = cur.copy(quantity = cur.quantity + qty) }
             } else {
-                current + CartItem(product, 1)
+                list + CartItem(product, qty)
             }
         }
     }
 
-    // Quitar producto
-    fun removeItem(productCode: String) {
-        _cartItems.update { current -> current.filterNot { it.product.code == productCode } }
-    }
-
-    // Cambiar cantidad
-    fun updateQuantity(productCode: String, newQty: Int) {
-        _cartItems.update { current ->
-            current.map {
-                if (it.product.code == productCode) it.copy(quantity = newQty.coerceAtLeast(1)) else it
-            }
+    fun updateQuantity(code: String, newQty: Int) {
+        _cartItems.update { list ->
+            val idx = list.indexOfFirst { it.product.code == code }
+            if (idx < 0) list
+            else if (newQty <= 0) list.toMutableList().also { it.removeAt(idx) }
+            else list.toMutableList().also { it[idx] = list[idx].copy(quantity = newQty) }
         }
     }
 
-    // Vaciar carrito
-    fun clearCart() {
-        _cartItems.value = emptyList()
-    }
-
-    // Calcular total
-    fun getTotal(): Int {
-        return _cartItems.value.sumOf { it.product.price * it.quantity }
+    fun removeItem(code: String) {
+        _cartItems.update { it.filterNot { ci -> ci.product.code == code } }
     }
 }

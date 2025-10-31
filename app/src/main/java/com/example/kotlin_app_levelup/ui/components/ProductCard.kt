@@ -1,5 +1,6 @@
 package com.example.kotlin_app_levelup.ui.components
-
+import java.text.NumberFormat
+import java.util.Locale
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,6 +22,8 @@ import com.example.kotlin_app_levelup.data.local.ProductEntity
 
 @Composable
 fun ProductCard(product: ProductEntity,onClick: (() -> Unit)? = null) {
+    val formattedPrice = NumberFormat.getNumberInstance(Locale("es", "CL")).format(product.price)
+
     Card(
         colors = CardDefaults.cardColors(containerColor = Color(0xFF101010)),
         modifier = Modifier
@@ -49,8 +52,9 @@ fun ProductCard(product: ProductEntity,onClick: (() -> Unit)? = null) {
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
+
             Text(
-                text = "$${product.price}",
+                text = "$$formattedPrice",
                 color = Color(0xFF39FF14),
                 fontSize = 14.sp
             )

@@ -74,8 +74,12 @@ dependencies {
     implementation("androidx.room:room-ktx:2.8.1")
     implementation(libs.androidx.material3)
     implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.ui.text)
+    implementation(libs.androidx.room.ktx)
     ksp("androidx.room:room-compiler:2.8.1")
 
+    // OpenStreetMap
+    implementation("org.osmdroid:osmdroid-android:6.1.18")
 
     // Testing
     testImplementation("junit:junit:4.13.2")
