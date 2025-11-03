@@ -136,9 +136,9 @@ class HomeViewModel(context: Context) : ViewModel() {
                 price = 29990,
                 description = "Juego de mesa para disfrutar con amigos",
                 categoria = "Juegos de mesa",
-                imageRes = R.drawable.catan1,
+                imageRes = R.drawable.catan_1,
                 imageCarrusel = listOf(
-                    R.drawable.catan1, R.drawable.catan2, R.drawable.catan3, R.drawable.catan4, R.drawable.catan5
+                    R.drawable.catan_1, R.drawable.catan2, R.drawable.catan3, R.drawable.catan4, R.drawable.catan5
                 )
             ),
             ProductEntity(

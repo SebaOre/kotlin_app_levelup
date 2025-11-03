@@ -59,7 +59,7 @@ fun MisComprasScreen(
                 title = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Image(
-                            painter = painterResource(id = R.drawable.logo_volver),
+                            painter = painterResource(id = R.drawable.volver),
                             contentDescription = "Volver",
                             modifier = Modifier
                                 .size(75.dp)

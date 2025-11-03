@@ -90,7 +90,7 @@ fun ProductDetailScreen(
                 title = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Image(
-                            painter = painterResource(id = R.drawable.logo_volver),
+                            painter = painterResource(id = R.drawable.volver),
                             contentDescription = "Level-Up (Volver)",
                             modifier = Modifier
                                 .size(75.dp)

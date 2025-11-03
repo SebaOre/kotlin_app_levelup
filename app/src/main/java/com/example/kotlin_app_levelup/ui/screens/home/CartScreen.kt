@@ -1,5 +1,7 @@
 package com.example.kotlin_app_levelup.ui.screens.home
 
+import java.text.NumberFormat
+import java.util.Locale
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -39,6 +41,8 @@ fun CartScreen(
 ) {
     val cartItems: List<CartItem> by viewModel.cartItems.collectAsState()
     val total: Int = cartItems.sumOf { it.product.price * it.quantity }
+    val formattedtotal = NumberFormat.getNumberInstance(Locale("es", "CL")).format(total)
+
 
     // Dirección desde ConfirmarUbicacionScreen (nullable)
     val deliveryAddress by navController.currentBackStackEntry
@@ -57,7 +61,7 @@ fun CartScreen(
                 title = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Image(
-                            painter = painterResource(id = R.drawable.logo_volver),
+                            painter = painterResource(id = R.drawable.volver),
                             contentDescription = "Level-Up (Volver)",
                             modifier = Modifier
                                 .size(75.dp)
@@ -132,7 +136,7 @@ fun CartScreen(
             Spacer(Modifier.height(12.dp))
 
             Text(
-                text = "Total: $${total}",
+                text = "Total: $${formattedtotal}",
                 color = Color(0xFF39FF14),
                 style = MaterialTheme.typography.titleLarge
             )
@@ -206,6 +210,8 @@ fun CartItemCard(
     onRemove: () -> Unit,
     onQtyChange: (Int) -> Unit
 ) {
+    val formattedPrice = NumberFormat.getNumberInstance(Locale("es", "CL")).format(cartItem.product.price)
+
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.DarkGray),
         modifier = Modifier.fillMaxWidth(),
@@ -226,7 +232,7 @@ fun CartItemCard(
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 Text(cartItem.product.name, color = Color.White, fontWeight = FontWeight.Bold)
-                Text("Precio: $${cartItem.product.price}", color = Color(0xFF39FF14))
+                Text("Precio: $${formattedPrice}", color = Color(0xFF39FF14))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     TextButton(onClick = { onQtyChange((cartItem.quantity - 1).coerceAtLeast(0)) }) {
                         Text("-", color = Color.White)

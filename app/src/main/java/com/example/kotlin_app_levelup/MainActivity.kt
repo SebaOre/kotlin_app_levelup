@@ -21,7 +21,7 @@ import com.example.kotlin_app_levelup.ui.screens.Perfil.RegistroScreen
 import com.example.kotlin_app_levelup.ui.screens.home.CartScreen
 import com.example.kotlin_app_levelup.ui.screens.home.HomeScreen
 import com.example.kotlin_app_levelup.ui.screens.home.ProductDetailScreen
-import com.example.kotlin_app_levelup.ui.screens.miscompras.MisComprasScreen // 👈 nuevo import
+import com.example.kotlin_app_levelup.ui.screens.miscompras.MisComprasScreen
 import com.example.kotlin_app_levelup.ui.theme.Kotlin_app_levelupTheme
 import com.example.kotlin_app_levelup.viewmodel.CartViewModel
 import kotlinx.coroutines.launch
@@ -42,6 +42,7 @@ class MainActivity : ComponentActivity() {
                     bottomBar = { BottomNavigationBar(navController = navController) }
                 ) { padding ->
                     NavHost(
+
                         navController = navController,
                         startDestination = "home",
                         modifier = Modifier.padding(padding)

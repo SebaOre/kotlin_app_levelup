@@ -2,10 +2,12 @@ package com.example.kotlin_app_levelup.ui.screens.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
@@ -14,12 +16,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.kotlin_app_levelup.R
@@ -69,17 +74,22 @@ fun HomeScreen(
                             searchText = it
                             viewModel.searchProducts(it.text)
                         },
-                        placeholder = { Text("Buscar producto...", color = Color.LightGray) },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(end = 8.dp),
+                            .padding(top =15.dp, end = 15.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                        ,
+                        placeholder = { Text("Buscar producto...", fontSize = 14.sp, color = Color.LightGray) },
                         singleLine = true,
+
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.DarkGray,
                             unfocusedContainerColor = Color.DarkGray,
                             focusedTextColor = Color.White,
                             unfocusedTextColor = Color.White,
-                            cursorColor = Color(0xFF1E90FF)
+                            cursorColor = Color(0xFF1E90FF),
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent
                         ),
                         leadingIcon = {
                             Icon(Icons.Default.Search, contentDescription = null, tint = Color(0xFF1E90FF))
