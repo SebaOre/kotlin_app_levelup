@@ -21,7 +21,7 @@ import com.example.kotlin_app_levelup.data.local.PurchaseItemEntity
         PurchaseEntity::class,
         PurchaseItemEntity::class
     ],
-    version = 12,
+    version = 15,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

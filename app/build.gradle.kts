@@ -76,6 +76,7 @@ dependencies {
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.ui.text)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.constraintlayout)
     ksp("androidx.room:room-compiler:2.8.1")
 
     // OpenStreetMap

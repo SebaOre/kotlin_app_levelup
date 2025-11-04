@@ -29,7 +29,7 @@ fun ProductCard(product: ProductEntity,onClick: (() -> Unit)? = null) {
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
-            .clickable { onClick?.invoke() },  // 👈 clickable
+            .clickable { onClick?.invoke() },
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         shape = RoundedCornerShape(12.dp)) {
         Column(

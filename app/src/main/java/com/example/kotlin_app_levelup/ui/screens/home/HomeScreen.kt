@@ -2,8 +2,8 @@ package com.example.kotlin_app_levelup.ui.screens.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -32,6 +32,7 @@ import com.example.kotlin_app_levelup.ui.components.ProductCard
 import com.example.kotlin_app_levelup.viewmodel.CartViewModel
 import com.example.kotlin_app_levelup.viewmodel.HomeViewModel
 import com.example.kotlin_app_levelup.viewmodel.HomeViewModelFactory
+import com.example.kotlin_app_levelup.ui.components.Carousel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -97,7 +98,7 @@ fun HomeScreen(
                     )
                 },
                 actions = {
-                    // 🏷️ Botón de categorías con menú
+                    //  Botón de categorías con menú
                     Box {
                         IconButton(onClick = { catMenuExpanded = true }) {
                             Icon(Icons.Default.FilterList, contentDescription = "Categorías", tint = Color(0xFF1E90FF))
@@ -125,7 +126,7 @@ fun HomeScreen(
                         }
                     }
 
-                    // 🛒 Carrito
+                    // Carrito
                     BadgedBox(badge = { if (cartCount > 0) Badge { Text("$cartCount") } }) {
                         IconButton(onClick = { navController.navigate("carrito") }) {
                             Icon(Icons.Default.ShoppingCart, contentDescription = "Carrito", tint = Color(0xFF1E90FF))
@@ -137,32 +138,47 @@ fun HomeScreen(
         },
         containerColor = Color.Black
     ) { padding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
                 .background(Color.Black)
         ) {
-            // Chip con categoría seleccionada (para limpiar rápido)
-            if (!selectedCategory.isNullOrBlank()) {
-                AssistChip(
-                    onClick = { viewModel.filterByCategory(null) },
-                    label = { Text("Categoría: ${selectedCategory}", color = Color.Black) },
-                    colors = AssistChipDefaults.assistChipColors(containerColor = Color(0xFF39FF14)),
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp, vertical = 6.dp)
-                )
+            item {
+                // Carrusel
+                Carousel()
+                Spacer(modifier = Modifier.height(8.dp))
             }
 
-            if (products.isEmpty()) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Sin productos", color = Color.Gray)
+            item {
+                // Chip de categoría seleccionada
+                if (!selectedCategory.isNullOrBlank()) {
+                    AssistChip(
+                        onClick = { viewModel.filterByCategory(null) },
+                        label = { Text("Categoría: ${selectedCategory}", color = Color.Black) },
+                        colors = AssistChipDefaults.assistChipColors(containerColor = Color(0xFF39FF14)),
+                        modifier = Modifier
+                            .padding(horizontal = 12.dp, vertical = 6.dp)
+                    )
                 }
-            } else {
-                LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(4.dp)) {
-                    items(products) { product ->
-                        ProductCard(product) {
-                            navController.navigate("detalle/${product.code}")
+            }
+
+            item {
+                if (products.isEmpty()) {
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        Text("Sin productos", color = Color.Gray)
+                    }
+                } else {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .heightIn(min = 0.dp, max = 5000.dp)
+                    ) {
+                        items(products) { product ->
+                            ProductCard(product) {
+                                navController.navigate("detalle/${product.code}")
+                            }
                         }
                     }
                 }

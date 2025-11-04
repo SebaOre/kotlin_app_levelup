@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.kotlin_app_levelup.R
 import com.example.kotlin_app_levelup.data.local.AppDatabase
 import com.example.kotlin_app_levelup.data.local.ProductEntity
+import com.example.kotlin_app_levelup.data.repository.ProductRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,34 +15,38 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(context: Context) : ViewModel() {
 
+    private val repository: ProductRepository
     private val dao = AppDatabase.getDatabase(context).productDao()
 
     private val _products = MutableStateFlow<List<ProductEntity>>(emptyList())
     val products: StateFlow<List<ProductEntity>> = _products.asStateFlow()
 
-    // 🏷️ categorías disponibles y categoría seleccionada
     private val _categories = MutableStateFlow<List<String>>(emptyList())
     val categories: StateFlow<List<String>> = _categories.asStateFlow()
 
     private val _selectedCategory = MutableStateFlow<String?>(null)
     val selectedCategory: StateFlow<String?> = _selectedCategory.asStateFlow()
 
-    // 🔎 query de búsqueda
     private val _query = MutableStateFlow("")
     val query: StateFlow<String> = _query.asStateFlow()
 
     private var loadJob: Job? = null
 
     init {
+        // Inicializamos el repositorio con el DAO
+        repository = ProductRepository(dao)
+
         viewModelScope.launch {
             val count = dao.getCount()
             if (count == 0) {
-                dao.insertAll(getDefaultProducts())
+                // Insertamos productos usando el Repository
+                repository.insertProducts(getDefaultProducts())
             }
         }
-        // cargar categorías y productos
+
+        // Cargar categorías y productos
         collectCategories()
-        reload() // sin filtros
+        reload()
     }
 
     private fun collectCategories() {
@@ -51,17 +56,17 @@ class HomeViewModel(context: Context) : ViewModel() {
     }
 
     private fun reload() {
-        // Cancela colección anterior para no dejar fugas
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
             val q = _query.value.trim().lowercase()
             val cat = _selectedCategory.value
             when {
                 cat.isNullOrBlank() && q.isBlank() -> {
-                    dao.getAllProducts().collect { _products.value = it }
+                    // Leemos desde el Repository
+                    repository.allProducts.collect { _products.value = it }
                 }
                 cat.isNullOrBlank() && q.isNotBlank() -> {
-                    dao.searchProducts("%$q%").collect { _products.value = it }
+                    repository.searchProducts("%$q%").collect { _products.value = it }
                 }
                 !cat.isNullOrBlank() && q.isBlank() -> {
                     dao.getByCategory(cat!!).collect { _products.value = it }
@@ -79,11 +84,11 @@ class HomeViewModel(context: Context) : ViewModel() {
     }
 
     fun filterByCategory(category: String?) {
-        _selectedCategory.value = category // null = todas
+        _selectedCategory.value = category
         reload()
     }
 
-    // ================== Seed ===================
+    // Productos iniciales
     private fun getDefaultProducts(): List<ProductEntity> {
         return listOf(
             ProductEntity(
@@ -101,7 +106,7 @@ class HomeViewModel(context: Context) : ViewModel() {
                 code = "AC001",
                 name = "Control Xbox Series X",
                 price = 59990,
-                description = "Control de consola de Xbox Series X ",
+                description = "Control de consola de Xbox Series X",
                 categoria = "Consolas",
                 imageRes = R.drawable.conxbox1,
                 imageCarrusel = listOf(
@@ -178,7 +183,7 @@ class HomeViewModel(context: Context) : ViewModel() {
                 code = "CA002",
                 name = "Razer Goliathus Chroma",
                 price = 29990,
-                description = "Mouse pad Gamer presicion y calidad",
+                description = "Mouse pad Gamer precisión y calidad",
                 categoria = "Mouse",
                 imageRes = R.drawable.mpad1,
                 imageCarrusel = listOf(
@@ -200,7 +205,7 @@ class HomeViewModel(context: Context) : ViewModel() {
                 code = "DA002",
                 name = "Poleron Gamer",
                 price = 19990,
-                description = "Polerones personlizado de videoJuegos",
+                description = "Polerones personalizados de videojuegos",
                 categoria = "Poleras",
                 imageRes = R.drawable.perso1,
                 imageCarrusel = listOf(
