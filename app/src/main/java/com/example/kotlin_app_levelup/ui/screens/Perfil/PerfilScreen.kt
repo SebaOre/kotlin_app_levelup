@@ -73,72 +73,76 @@ fun PerfilScreen(
     }
 
     // === INTERFAZ ===
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color.Black)
-            .padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Mi Perfil",
-            fontSize = 28.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF39FF14),
-            modifier = Modifier.padding(vertical = 16.dp)
-        )
-
-        // === FOTO DE PERFIL ===
-        Box(
+        Column(
             modifier = Modifier
-                .size(130.dp)
-                .clip(CircleShape)
-                .border(3.dp, Color(0xFF39FF14), CircleShape)
-                .background(Color.DarkGray)
-                .clickable { selectImage() },
-            contentAlignment = Alignment.Center
+                .fillMaxSize()
+                .background(Color.Black)
+                .padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (imageUri != null) {
-                Image(
-                    painter = rememberAsyncImagePainter(imageUri),
-                    contentDescription = "Foto de perfil",
-                    modifier = Modifier.fillMaxSize().clip(CircleShape),
-                    contentScale = ContentScale.Crop
-                )
-            } else {
-                Text(
-                    text = "Seleccionar\nFoto",
-                    color = Color.LightGray,
-                    textAlign = TextAlign.Center,
-                    fontSize = 14.sp
-                )
-            }
-        }
+            Text(
+                text = "Mi Perfil",
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF39FF14),
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
 
-        Spacer(modifier = Modifier.height(25.dp))
-
-        InfoField(label = "Nombre", value = savedName)
-        InfoField(label = "Correo", value = savedEmail)
-        InfoField(label = "Edad", value = if (savedAge > 0) savedAge.toString() else "—")
-
-        Spacer(modifier = Modifier.height(40.dp))
-
-        Button(
-            onClick = {
-                scope.launch {
-                    userPrefs.setLoggedIn(false)
-                    // 🔹 No se borra la imagen de otros usuarios
-                    navController.navigate("login") {
-                        popUpTo("perfil") { inclusive = true }
-                    }
+            // === FOTO DE PERFIL ===
+            Box(
+                modifier = Modifier
+                    .size(130.dp)
+                    .clip(CircleShape)
+                    .border(3.dp, Color(0xFF39FF14), CircleShape)
+                    .background(Color.DarkGray)
+                    .clickable { selectImage() },
+                contentAlignment = Alignment.Center
+            ) {
+                if (imageUri != null) {
+                    Image(
+                        painter = rememberAsyncImagePainter(imageUri),
+                        contentDescription = "Foto de perfil",
+                        modifier = Modifier.fillMaxSize().clip(CircleShape),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Text(
+                        text = "Seleccionar\nFoto",
+                        color = Color.LightGray,
+                        textAlign = TextAlign.Center,
+                        fontSize = 14.sp
+                    )
                 }
-            },
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Cerrar sesión", color = Color.White, fontWeight = FontWeight.Bold)
+            }
+
+            Spacer(modifier = Modifier.height(25.dp))
+
+            InfoField(label = "Nombre", value = savedName)
+            InfoField(label = "Correo", value = savedEmail)
+            InfoField(label = "Edad", value = if (savedAge > 0) savedAge.toString() else "—")
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            Button(
+                onClick = {
+                    scope.launch {
+                        userPrefs.setLoggedIn(false)
+                        // 🔹 No se borra la imagen de otros usuarios
+                        navController.navigate("login") {
+                            popUpTo("perfil") { inclusive = true }
+                        }
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Cerrar sesión", color = Color.White, fontWeight = FontWeight.Bold)
+
+            }
+
         }
-    }
+
+
 }
 
 @Composable
