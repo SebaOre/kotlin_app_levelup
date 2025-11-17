@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.kotlin_app_levelup.data.local.AppDatabase
 import com.example.kotlin_app_levelup.data.local.ProductEntity
@@ -24,6 +25,7 @@ import com.example.kotlin_app_levelup.ui.screens.home.ProductDetailScreen
 import com.example.kotlin_app_levelup.ui.screens.miscompras.MisComprasScreen
 import com.example.kotlin_app_levelup.ui.theme.Kotlin_app_levelupTheme
 import com.example.kotlin_app_levelup.viewmodel.CartViewModel
+import com.example.kotlin_app_levelup.ui.screens.home.SplashScreen
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -38,15 +40,24 @@ class MainActivity : ComponentActivity() {
                 val db = remember { AppDatabase.getDatabase(context) }
                 val scope = rememberCoroutineScope()
 
+                val navBackStackEntry = navController.currentBackStackEntryAsState()
+                val currentRoute = navBackStackEntry.value?.destination?.route
+
                 Scaffold(
-                    bottomBar = { BottomNavigationBar(navController = navController) }
+                    bottomBar = {
+                        if (currentRoute != "splash") {
+                            BottomNavigationBar(navController = navController)
+                        }
+                    }
                 ) { padding ->
                     NavHost(
-
                         navController = navController,
-                        startDestination = "home",
+                        startDestination = "splash",
                         modifier = Modifier.padding(padding)
                     ) {
+                        composable("splash") {
+                            SplashScreen(navController)
+                        }
                         composable("home") {
                             HomeScreen(
                                 modifier = Modifier.padding(padding),
@@ -55,7 +66,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        // 🔁 Categorías -> Mis Compras
+                // 🔁 Categorías -> Mis Compras
                         composable("miscompras") {
                             MisComprasScreen(
                                 navController = navController,
