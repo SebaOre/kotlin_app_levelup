@@ -15,11 +15,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.kotlin_app_levelup.R
 import com.example.kotlin_app_levelup.data.local.AppDatabase
 import com.example.kotlin_app_levelup.data.local.PurchaseEntity
@@ -39,14 +38,15 @@ fun MisComprasScreen(
     var purchases by remember { mutableStateOf<List<PurchaseEntity>>(emptyList()) }
     var itemsByPurchase by remember { mutableStateOf<Map<Long, List<PurchaseItemEntity>>>(emptyMap()) }
 
-    // 🔁 Carga inicial (Room)
+    // 🔁 Cargar Compras + Items desde Room
     LaunchedEffect(Unit) {
         val allPurchases = db.purchaseDao().getAll().sortedByDescending { it.createdAt }
         val mapa = mutableMapOf<Long, List<PurchaseItemEntity>>()
-        for (p in allPurchases) {
-            // ajusta el nombre si tu DAO usa otro (getByPurchaseId, etc.)
+
+        allPurchases.forEach { p ->
             mapa[p.id] = db.purchaseItemDao().getByPurchase(p.id)
         }
+
         purchases = allPurchases
         itemsByPurchase = mapa
     }
@@ -59,7 +59,7 @@ fun MisComprasScreen(
                 title = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Image(
-                            painter = painterResource(id = R.drawable.volver),
+                            painter = rememberAsyncImagePainter(model = R.drawable.volver),
                             contentDescription = "Volver",
                             modifier = Modifier
                                 .size(75.dp)
@@ -69,8 +69,7 @@ fun MisComprasScreen(
                         Text(
                             text = "Mis Compras 🧾",
                             color = Color(0xFF39FF14),
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.Bold
+                            style = MaterialTheme.typography.headlineSmall
                         )
                     }
                 },
@@ -79,15 +78,17 @@ fun MisComprasScreen(
         },
         containerColor = Color.Black
     ) { inner ->
+
         Column(
             modifier = modifier
-                .fillMaxSize()
                 .background(Color.Black)
                 .padding(inner)
                 .padding(16.dp)
+                .fillMaxSize()
         ) {
+
             if (purchases.isEmpty()) {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text("Aún no tienes compras", color = Color.Gray)
                 }
                 return@Column
@@ -95,30 +96,36 @@ fun MisComprasScreen(
 
             LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 items(purchases) { p ->
+
                     Card(
                         colors = CardDefaults.cardColors(containerColor = Color(0xFF121212)),
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(10.dp)
                     ) {
+
                         Column(Modifier.padding(12.dp)) {
-                            // 🧾 Encabezado
-                            Text("Cliente: ${p.buyerName}", color = Color(0xFF39FF14), fontWeight = FontWeight.Bold)
+
+                            // 🧾 INFO COMPRA
+                            Text("Cliente: ${p.buyerName}", color = Color(0xFF39FF14), fontSize = 15.sp)
                             Text("Fecha: ${fmt.format(Date(p.createdAt))}", color = Color.White, fontSize = 14.sp)
                             Text("Total: $${formatPrice(p.total)}", color = Color(0xFF39FF14), fontSize = 14.sp)
                             Text("Entrega: ${p.deliveryAddress ?: "—"}", color = Color.LightGray, fontSize = 13.sp)
 
-                            Spacer(Modifier.height(10.dp))
+                            Spacer(modifier = Modifier.height(10.dp))
 
-                            // 📦 Productos comprados
+                            // 📦 PRODUCTOS DENTRO DE LA COMPRA
                             itemsByPurchase[p.id]?.forEach { item ->
+
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(vertical = 4.dp)
                                 ) {
+
+                                    // 🔥 Imagen desde URL con COIL
                                     Image(
-                                        painter = painterResource(id = item.imageRes),
+                                        painter = rememberAsyncImagePainter(model = item.imageUrl),
                                         contentDescription = item.productName,
                                         modifier = Modifier
                                             .size(60.dp)
@@ -129,7 +136,11 @@ fun MisComprasScreen(
                                     Spacer(Modifier.width(10.dp))
 
                                     Column(Modifier.weight(1f)) {
-                                        Text(item.productName, color = Color.White, fontWeight = FontWeight.Bold)
+                                        Text(
+                                            item.productName,
+                                            color = Color.White,
+                                            fontSize = 15.sp
+                                        )
                                         Text(
                                             "x${item.quantity} • $${formatPrice(item.price)} c/u",
                                             color = Color.Gray,
@@ -140,12 +151,12 @@ fun MisComprasScreen(
                                     Text(
                                         "$${formatPrice(item.price * item.quantity)}",
                                         color = Color(0xFF39FF14),
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 14.sp
+                                        fontSize = 15.sp
                                     )
                                 }
                             }
-                            Spacer(Modifier.height(6.dp))
+
+                            Spacer(modifier = Modifier.height(6.dp))
                         }
                     }
                 }
@@ -154,4 +165,5 @@ fun MisComprasScreen(
     }
 }
 
+// Formato de moneda simple tipo CLP
 private fun formatPrice(n: Int): String = "%,d".format(n).replace(',', '.')

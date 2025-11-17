@@ -77,7 +77,7 @@ fun HomeScreen(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top =15.dp, end = 15.dp)
+                            .padding(top =15.dp, bottom = 15.dp)
                             .clip(RoundedCornerShape(16.dp))
                         ,
                         placeholder = { Text("Buscar producto...", fontSize = 14.sp, color = Color.LightGray) },

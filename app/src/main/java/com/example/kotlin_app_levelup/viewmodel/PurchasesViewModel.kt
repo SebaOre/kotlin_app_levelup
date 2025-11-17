@@ -61,7 +61,7 @@ class PurchasesViewModel(
                         productName = ci.product.name,
                         price = ci.product.price,
                         quantity = ci.quantity,
-                        imageRes = ci.product.imageRes
+                        imageUrl = ci.product.image
                     )
                 }
                 db.purchaseItemDao().insertAll(items)

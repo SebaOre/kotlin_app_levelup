@@ -15,5 +15,5 @@ data class PurchaseItemEntity(
     val productName: String,
     val price: Int,
     val quantity: Int,
-    val imageRes: Int
+    val imageUrl: String
 )

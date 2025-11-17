@@ -14,4 +14,5 @@ interface PurchaseDao {
 
     @Query("DELETE FROM purchases")
     suspend fun clearAll()
+
 }

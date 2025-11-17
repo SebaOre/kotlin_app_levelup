@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.room.withTransaction
+import coil.compose.rememberAsyncImagePainter
 import com.example.kotlin_app_levelup.R
 import com.example.kotlin_app_levelup.data.local.AppDatabase
 import com.example.kotlin_app_levelup.data.local.PurchaseEntity
@@ -168,7 +169,8 @@ fun CartScreen(
                                     productName = ci.product.name,
                                     price = ci.product.price,
                                     quantity = ci.quantity,
-                                    imageRes = ci.product.imageRes
+                                    imageUrl = ci.product.image
+
                                 )
                             }
                             db.purchaseItemDao().insertAll(items)
@@ -222,7 +224,7 @@ fun CartItemCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(id = cartItem.product.imageRes),
+                painter = rememberAsyncImagePainter(model = cartItem.product.image),
                 contentDescription = cartItem.product.name,
                 modifier = Modifier
                     .size(70.dp)

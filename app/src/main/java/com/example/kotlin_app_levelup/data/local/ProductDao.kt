@@ -8,14 +8,17 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ProductDao {
-    @Query("SELECT * FROM products ORDER BY id ASC")
+
+    @Query("SELECT * FROM products ORDER BY name ASC")
     fun getAllProducts(): Flow<List<ProductEntity>>
 
     // 🔎 Búsqueda por nombre/descripcion/categoria (case-insensitive)
     @Query("""
         SELECT * FROM products
-        WHERE LOWER(name) LIKE :pattern OR LOWER(description) LIKE :pattern OR LOWER(categoria) LIKE :pattern
-        ORDER BY id ASC
+        WHERE LOWER(name) LIKE :pattern 
+           OR LOWER(description) LIKE :pattern 
+           OR LOWER(categoria) LIKE :pattern
+        ORDER BY name ASC
     """)
     fun searchProducts(pattern: String): Flow<List<ProductEntity>>
 
@@ -24,7 +27,7 @@ interface ProductDao {
     fun getAllCategories(): Flow<List<String>>
 
     // 🏷️ Filtrar por categoría exacta
-    @Query("SELECT * FROM products WHERE categoria = :category ORDER BY id ASC")
+    @Query("SELECT * FROM products WHERE categoria = :category ORDER BY name ASC")
     fun getByCategory(category: String): Flow<List<ProductEntity>>
 
     // 🔎 + 🏷️ Búsqueda dentro de una categoría
@@ -32,7 +35,7 @@ interface ProductDao {
         SELECT * FROM products
         WHERE categoria = :category
           AND (LOWER(name) LIKE :pattern OR LOWER(description) LIKE :pattern)
-        ORDER BY id ASC
+        ORDER BY name ASC
     """)
     fun searchInCategory(category: String, pattern: String): Flow<List<ProductEntity>>
 
@@ -46,10 +49,12 @@ interface ProductDao {
     suspend fun insertAll(products: List<ProductEntity>)
 
     @Query("""
-    SELECT * FROM products
-    WHERE categoria = :category AND code <> :excludeCode
-    ORDER BY id DESC
-""")
+        SELECT * FROM products
+        WHERE categoria = :category AND code <> :excludeCode
+        ORDER BY code DESC
+    """)
     suspend fun getSuggestions(category: String, excludeCode: String): List<ProductEntity>
 
+    @Query("DELETE FROM products")
+    suspend fun clearAll()
 }

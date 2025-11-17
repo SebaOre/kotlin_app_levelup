@@ -1,4 +1,5 @@
 package com.example.kotlin_app_levelup.ui.components
+
 import java.text.NumberFormat
 import java.util.Locale
 import androidx.compose.foundation.Image
@@ -14,14 +15,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.font.FontWeight
+import coil.compose.rememberAsyncImagePainter   // <--- IMPORTANTE
 import com.example.kotlin_app_levelup.data.local.ProductEntity
 
 @Composable
-fun ProductCard(product: ProductEntity,onClick: (() -> Unit)? = null) {
+fun ProductCard(product: ProductEntity, onClick: (() -> Unit)? = null) {
     val formattedPrice = NumberFormat.getNumberInstance(Locale("es", "CL")).format(product.price)
 
     Card(
@@ -31,13 +32,14 @@ fun ProductCard(product: ProductEntity,onClick: (() -> Unit)? = null) {
             .fillMaxWidth()
             .clickable { onClick?.invoke() },
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-        shape = RoundedCornerShape(12.dp)) {
+        shape = RoundedCornerShape(12.dp)
+    ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(8.dp)
         ) {
             Image(
-                painter = painterResource(id = product.imageRes),
+                painter = rememberAsyncImagePainter(model = product.image), // CAMBIO AQUÍ
                 contentDescription = product.name,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -45,7 +47,9 @@ fun ProductCard(product: ProductEntity,onClick: (() -> Unit)? = null) {
                     .fillMaxWidth()
                     .background(Color.Black)
             )
+
             Spacer(modifier = Modifier.height(8.dp))
+
             Text(
                 text = product.name,
                 color = Color.White,

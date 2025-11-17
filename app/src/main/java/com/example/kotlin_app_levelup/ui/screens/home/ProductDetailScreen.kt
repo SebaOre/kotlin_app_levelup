@@ -40,6 +40,7 @@ import com.example.kotlin_app_levelup.viewmodel.ReviewsViewModel
 import com.example.kotlin_app_levelup.viewmodel.ReviewsViewModelFactory
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.shape.RoundedCornerShape
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -68,9 +69,12 @@ fun ProductDetailScreen(
     val scope = rememberCoroutineScope()
 
     // Carrusel
-    val images: List<Int> = remember(product) {
-        if (product.imageCarrusel.isNotEmpty()) product.imageCarrusel else listOf(product.imageRes)
+    // 🔥 Ahora las imágenes vienen de URLs
+    val images: List<String> = remember(product) {
+        if (product.imageCarrusel.isNotEmpty()) product.imageCarrusel
+        else listOf(product.image) // usa imagen principal si no hay lista
     }
+
     val pagerState = rememberPagerState(pageCount = { images.size })
 
     var newRating by remember { mutableStateOf(0) }
@@ -362,11 +366,14 @@ private fun SuggestionMiniCard(p: ProductEntity, onClick: () -> Unit) {
     ) {
         Row(Modifier.fillMaxSize().padding(8.dp)) {
             Image(
-                painter = painterResource(id = p.imageRes),
+                painter = rememberAsyncImagePainter(
+                    model = p.imageCarrusel.firstOrNull() ?: p.image
+                ),
                 contentDescription = p.name,
                 modifier = Modifier
-                    .size(100.dp)
-                    .clip(MaterialTheme.shapes.medium),
+                    .height(110.dp)
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(10.dp)),
                 contentScale = ContentScale.Crop
             )
             Spacer(Modifier.width(8.dp))
