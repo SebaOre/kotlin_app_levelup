@@ -7,7 +7,7 @@ object RetrofitInstance {
 
     val api: ProductApiService by lazy {
         Retrofit.Builder()
-            .baseUrl("https://towns-chairman-democrats-fascinating.trycloudflare.com")
+            .baseUrl("https://api.sebaorekind.site/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ProductApiService::class.java)
