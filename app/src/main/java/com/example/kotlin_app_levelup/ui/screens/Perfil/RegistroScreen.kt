@@ -111,23 +111,61 @@ fun RegistroScreen(navController: NavController) {
         Button(
             onClick = {
                 scope.launch {
-                    if (nombre.isBlank() || correo.isBlank() || contrasena.isBlank()) {
-                        mensaje = "Completa todos los campos ❌"
-                    } else {
-                        userDao.insertUser(
-                            UserEntity(
-                                nombre = nombre.trim(),
-                                correo = correo.trim(),
-                                edad = edad.toIntOrNull() ?: 0,
-                                contrasena = contrasena.trim(),
-                                registrado = true
-                            )
+
+                    // Validación campos obligatorios
+                    if (nombre.isBlank() || correo.isBlank() || edad.isBlank() || contrasena.isBlank()) {
+                        mensaje = "Completa todos los campos"
+                        return@launch
+                    }
+
+                    val nombreRegex= Regex("^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$")
+                    if (!nombreRegex.matches(nombre.trim())){
+                        mensaje = "Ingrese nombre Valido"
+                        return@launch
+                    }
+
+                    // Validación correo
+                    val emailRegex = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")
+                    if (!emailRegex.matches(correo.trim())) {
+                        mensaje = "Correo inválido"
+                        return@launch
+                    }
+
+                    // Validación edad
+                    val edadInt = edad.toIntOrNull()
+                    if (edadInt == null || edadInt < 13) {
+                        mensaje = "Ingresa una edad válida (mínimo 13 años)"
+                        return@launch
+                    }
+
+                    // Validar contraseña
+                    if (contrasena.length < 6) {
+                        mensaje = "La contraseña debe tener al menos 6 caracteres"
+                        return@launch
+                    }
+
+                    // Verificar correo duplicado
+                    val existe = userDao.getUserByEmail(correo.trim())
+                    if (existe != null) {
+                        mensaje = "Este correo ya está registrado"
+                        return@launch
+                    }
+
+                    // Si todo OK → insertar
+                    userDao.insertUser(
+                        UserEntity(
+                            nombre = nombre.trim(),
+                            correo = correo.trim(),
+                            edad = edadInt,
+                            contrasena = contrasena.trim(),
+                            registrado = true
                         )
-                        mensaje = "Usuario registrado correctamente ✅"
-                        // volver a Login
-                        navController.navigate("login") {
-                            popUpTo("registro") { inclusive = true }
-                        }
+                    )
+
+                    mensaje = "Usuario registrado correctamente"
+
+                    navController.navigate("login") {
+                        popUpTo("registro") { inclusive = true }
                     }
                 }
             },
