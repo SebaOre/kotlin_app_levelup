@@ -84,8 +84,8 @@ dependencies {
 
     // Testing
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.2.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.0")
     androidTestImplementation(platform("androidx.compose:compose-bom:2024.09.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 
@@ -96,5 +96,19 @@ dependencies {
     // Retrofit y Gson Converter
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+
+    // JUnit5 (motor de pruebas)
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
+
+    // MockK (mockeo)
+    testImplementation("io.mockk:mockk:1.13.10")
+    // Corrutinas para testing
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    // Kotest (opcional, por si lo usas)
+    testImplementation("io.kotest:kotest-assertions-core:5.8.0")
+    testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
+
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.2")
+
 
 }
